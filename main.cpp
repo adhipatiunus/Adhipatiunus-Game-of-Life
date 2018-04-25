@@ -18,27 +18,29 @@ const char dead = '*';
 const char alive = 'X';
 char board[m_row][m_col];
 int alive_neighbor = 0;
+int alive_count_0 = 0;
+int alive_count_1 = 0;
 Position basic[3];
 
-void Define();
+void Define(char board[m_row][m_col]);
 void Print();
-void Check_State();
+void Check_State(char board[m_row][m_col]);
 
 int main()
 {
-    Define();
+    Define(board);
     Sleep(2000);
     ClearScreen();
     while (true)
     {
-        Check_State();
+        Check_State(board);
         Sleep(2000);
         ClearScreen();
     }
     return 0;
 }
 
-void Define()
+void Define(char board[m_row][m_col])
 {
     int n;
 
@@ -88,35 +90,30 @@ void Print()
     }
 }
 
-void Check_State()
+void Check_State(char board[m_row][m_col])
 {
     for (int i = 0; i < m_row; i++)
     {
         for (int j = 0; j < m_col; j++)
         {
-            alive_neighbor = 0;
             if (board[i][j] == alive)
             {
+                alive_count_0++;
                 for (int k = -1; k <= 1; k++)
                 {
                     for (int l = -1; l <= 1; l++)
                     {
-                        if (board[i+k][j+l] == alive)
+                        if (!(k == 0 && l == 0))
                         {
-                            alive_neighbor++;
-                        }
-                        else if (k == 0 && l == 0)
-                        {
-                            continue;
+                            if (board[i + k][j + l] == alive)
+                            {
+                                alive_neighbor++;
+                            }
                         }
                     }
                 }
 
-                if(alive_neighbor < 2)
-                {
-                    board[i][j] = dead;
-                }
-                else if (alive_neighbor == 2 || alive_neighbor == 3)
+                if (alive_neighbor == 2 || alive_neighbor == 3)
                 {
                     board[i][j] = alive;
                 }
@@ -126,19 +123,18 @@ void Check_State()
                 }
             }
 
-            else if(board[i][j] == dead)
+            if(board[i][j] == dead)
             {
                 for (int k = -1; k <= 1; k++)
                 {
                     for (int l = -1; l <= 1; l++)
                     {
-                        if (board[i+k][j+l] == alive)
+                        if (!(k == 0 && l == 0))
                         {
-                            alive_neighbor++;
-                        }
-                        else if (k == 0 && l == 0)
-                        {
-                            continue;
+                            if (board[i + k][j + l] == alive)
+                            {
+                                alive_neighbor++;
+                            }
                         }
                     }
                 }
@@ -154,9 +150,17 @@ void Check_State()
                 }
 
             }
+            alive_neighbor = 0;
         }
     }
-
     Print();
+
+    if(alive_count_0 - alive_count_1 == 0)
+    {
+        cout << "EQUILIBRIUM ACHIEVED!" << endl;
+        exit(0);
+    }
+
+    alive_count_1 = alive_count_0;
 }
 
