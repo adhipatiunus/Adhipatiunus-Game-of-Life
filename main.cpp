@@ -112,7 +112,7 @@ void Check_State()
                     }
                 }
 
-                if(alive_neighbor == 0 || alive_neighbor == 1)
+                if(alive_neighbor < 2)
                 {
                     board[i][j] = dead;
                 }
